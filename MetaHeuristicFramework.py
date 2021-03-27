@@ -5,12 +5,16 @@ MaxSearches = 10000
 
 
 class VRP:
-    def __init__(self, capacity, dist_matrix, goods):
+    def __init__(self, capacity, dist_matrix, goods, config):
         self.trucks = [Truck(capacity)]
         self.max_capacity = capacity
         self.dist_matrix = dist_matrix
         self.goods = goods
-        self.unvisited_cities = list(range(len(goods)))
+        self.unvisited_cities = list(range(1, len(goods)))
+        self.config = config
+        for city in self.config:
+            self.add_route(city)
+        self.cost = self.cost()
 
     def add_truck(self):
         self.trucks.append(Truck(self.max_capacity))

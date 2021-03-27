@@ -8,6 +8,10 @@ def cvrp(vehicles, capacity, dist_matrix, goods):
 
 
 def config_data(input_file):
+    with open(input_file) as f:
+        lines = f.readlines()
+    for l in lines:
+        l.strip()
 
     return vehicles, capacity, dist_matrix, goods
 

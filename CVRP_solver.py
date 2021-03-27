@@ -1,11 +1,13 @@
 from sys import argv
 import numpy as np
 from scipy.spatial import distance
-import MetaHeuristicFramework as mhf
+import TabuSearch as TS
+import SimulatedAnnealing as SA
+import AntColonyOptimization as ACO
 
 
 def cvrp(capacity, dist_matrix, goods):
-    solution = mhf.IteratedLocalSearch(capacity, dist_matrix, goods)
+    solution = TS.TabuSearch(capacity, dist_matrix, goods,)
 
 
 def config_data(input_file):
@@ -15,12 +17,12 @@ def config_data(input_file):
         l.strip()
     coords, goods = [], []
     for idx, l in enumerate(lines):
-        if l.startswith("CAPACITY : "):
-            l = l.replace('CAPACITY : ', '')
-            capacity = int(l)
         if l.startswith('DIMENSION :'):
             l = l.replace('DIMENSION : ', '')
             dim = int(l)
+        if l.startswith("CAPACITY : "):
+            l = l.replace('CAPACITY : ', '')
+            capacity = int(l)
         if l.startswith('NODE_COORD_SECTION'):
             for i in range(idx+1, dim+idx+1):
                 p = lines[i].split()
@@ -29,7 +31,7 @@ def config_data(input_file):
             for i in range(idx + 1, dim + idx + 1):
                 g = lines[i].split()
                 goods.append(int(g[1]))
-    dist_matrix = np.array([[0 for i in range(dim)] for j in range(dim)], float)
+    dist_matrix = np.array([[0 for _ in range(dim)] for _ in range(dim)], float)
     for index_i, cord_i in enumerate(coords):
         for index_j, cord_j in enumerate(coords):
             dist_matrix[index_i][index_j] = distance.euclidean(cord_i, cord_j)

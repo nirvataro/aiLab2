@@ -1,5 +1,3 @@
-import random
-
 
 MaxSearches = 10000
 
@@ -14,7 +12,7 @@ class VRP:
         self.config = config
         for city in self.config:
             self.add_route(city)
-        self.cost = self.cost()
+        self.cost = self.calc_cost()
 
     def add_truck(self):
         self.trucks.append(Truck(self.max_capacity))
@@ -30,7 +28,7 @@ class VRP:
         self.trucks[-1].route.append(city)
         self.unvisited_cities.remove(city)
 
-    def cost(self):
+    def calc_cost(self):
         total_cost = 0
         for t in self.trucks:
             total_cost += t.distance_travel
@@ -42,22 +40,3 @@ class Truck:
         self.capacity = capacity
         self.distance_travel = 0
         self.route = [0]
-
-
-def generateInitialSolution(capacity, dist_matrix, goods):
-    vrp_generate = VRP(capacity, dist_matrix, goods)
-    while vrp_generate.unvisited_cities:
-        vrp_generate.add_route(random.choice(vrp_generate.unvisited_cities))
-
-    return vrp_generate
-
-
-def IteratedLocalSearch(capacity, dist_matrix, goods):
-    s = generateInitialSolution(capacity, dist_matrix, goods)
-    s_star = s
-    for k in MaxSearches:
-        s = LocalSearch(f, N, L, S, s)
-        if s.cost < s_star.cost:
-            s_star = s
-        s = GenerateNewSolution(s)
-    return s_star

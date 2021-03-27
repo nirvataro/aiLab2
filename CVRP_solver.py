@@ -4,12 +4,11 @@ from scipy.spatial import distance
 import MetaHeuristicFramework as mhf
 
 
-def cvrp(vehicles, capacity, dist_matrix, goods):
-    solution = mhf.IteratedLocalSearch()
+def cvrp(capacity, dist_matrix, goods):
+    solution = mhf.IteratedLocalSearch(capacity, dist_matrix, goods)
 
 
 def config_data(input_file):
-    vehicles = 100 # wait for shay to answer
     with open(input_file) as f:
         lines = f.readlines()
     for l in lines:
@@ -34,10 +33,10 @@ def config_data(input_file):
     for index_i, cord_i in enumerate(coords):
         for index_j, cord_j in enumerate(coords):
             dist_matrix[index_i][index_j] = distance.euclidean(cord_i, cord_j)
-    return vehicles, capacity, dist_matrix, goods
+    return capacity, dist_matrix, goods
 
 
 if __name__ == '__main__':
     input_file = 'E-n33-k4.txt'     # argv[1]
-    vehicles, capacity, dist_matrix, goods = config_data(input_file)
-    cvrp(vehicles, capacity, dist_matrix, goods)
+    capacity, dist_matrix, goods = config_data(input_file)
+    cvrp(capacity, dist_matrix, goods)

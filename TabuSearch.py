@@ -10,10 +10,9 @@ class TabuSearch:
         self.city_dist_matrix = dist_matrix
         self.goods = goods
         self.truck_capacity = capacity
-        start_perm = self.generate_start_permutation()
-        self.sBest = VRP(capacity, dist_matrix, goods, start_perm)
-        self.best_candidate = self.sBest
-        self.tabu_list[self.sBest.config.tobytes()] = 0
+        self.tsBest = VRP(capacity, dist_matrix, goods)
+        self.best_candidate = self.tsBest
+        self.tabu_list[self.tsBest.config.tobytes()] = 0
         self.t_search(maxIter, maxTabuSize)
 
     def t_search(self, t_iter, t_size):
@@ -22,13 +21,13 @@ class TabuSearch:
             neighborhood = self.getNeighborhood()
             self.best_candidate = None
             for cand in neighborhood:
-                if self.tabu_list.get(cand.config.tobytes()) is None and (self.best_candidate is None or self.best_candidate.cost > cand.cost):
+                if self.tabu_list.get(cand.config.tobytes()) is None and (self.best_candidate is None or self.best_candidate.cost[0] > cand.cost[0]):
                     self.best_candidate = cand
-            if self.best_candidate.cost < self.sBest.cost:
-                self.sBest = self.best_candidate
+            if self.best_candidate.cost[0] < self.tsBest.cost[0]:
+                self.tsBest = self.best_candidate
                 print("Improvement Found!")
                 print("Iteration: ", i, "\nBest")
-                print(self.sBest)
+                print(self.tsBest)
                 last_improved = 0
             else:
                 last_improved += 1
@@ -47,10 +46,8 @@ class TabuSearch:
                 self.perm_mutate()
 
     def __str__(self):
-        string = "The Best Route Found: \n"
-        for i, t in enumerate(self.sBest.trucks):
-            string += "Truck " + str(i+1) + ": " + str(t.route) + "\n"
-        return string + "Total Cost: " + str(self.sBest.cost) + "\n"
+        string = "Tabu Search:\nThe Best Route Found: \n"
+        return string + str(self.tsBest)
 
     def getNeighborhood(self):
         neighborhood = []
@@ -63,35 +60,12 @@ class TabuSearch:
 
     def perm_mutate(self):
         while True:
-            s_points = random.sample(range(len(self.sBest.config)), 2)
+            s_points = random.sample(range(len(self.tsBest.config)), 2)
             s_points.sort()
             start, end = s_points[0], s_points[1]
-            part = self.sBest.config[start:end]
+            part = self.tsBest.config[start:end]
             random.shuffle(part)
-            self.best_candidate = self.sBest
+            self.best_candidate = self.tsBest
             self.best_candidate.config[start:end] = part
             if self.tabu_list.get(self.best_candidate.config.tobytes()) is None:
                 return
-
-    def generate_start_permutation(self):
-        permutation = []
-        unvisited_cities = self.cities.copy()
-        current_city = 0
-        while unvisited_cities:
-            min1 = min2 = min3 = np.inf
-            min1_city, min2_city, min3_city = 0, 0, 0
-            for city in self.cities:
-                dist = self.city_dist_matrix[current_city][city]
-                if city != current_city and dist < min3 and city in unvisited_cities and city != 0:
-                    min3 = dist
-                    min3_city = city
-                    if dist < min2:
-                        min3, min2 = min2, min3
-                        min3_city, min2_city = min2_city, min3_city
-                        if min2 < min1:
-                            min1, min2 = min2, min1
-                            min1_city, min2_city = min2_city, min1_city
-            city = random.choice([min1_city, min2_city, min3_city])
-            permutation.append(city)
-            unvisited_cities.remove(city)
-        return np.array(permutation)

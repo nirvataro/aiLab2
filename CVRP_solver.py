@@ -1,13 +1,14 @@
 from sys import argv
 import numpy as np
 from scipy.spatial import distance
-import TabuSearch as TS
-import SimulatedAnnealing as SA
+from TabuSearch import TabuSearch
+from SimulatedAnnealing import SimulatedAnnealing
 import AntColonyOptimization as ACO
 
 
 def cvrp(capacity, dist_matrix, goods):
-    solution = SA.SimulatedAnnealing(capacity, dist_matrix, goods)
+     print(SimulatedAnnealing(capacity, dist_matrix, goods))
+     print(TabuSearch(capacity, dist_matrix, goods))
 
 
 def config_data(input_file):

@@ -1,15 +1,19 @@
-
+import numpy as np
+import random
 MaxSearches = 10000
 
 
 class VRP:
-    def __init__(self, capacity, dist_matrix, goods, config):
+    def __init__(self, capacity, dist_matrix, goods, config=None):
         self.trucks = [Truck(capacity)]
         self.max_capacity = capacity
         self.dist_matrix = dist_matrix
         self.goods = goods
         self.unvisited_cities = list(range(1, len(goods)))
-        self.config = config
+        if config is None:
+            self.config = self.generate_start_permutation_3NN()
+        else:
+            self.config = config
         for city in self.config:
             self.add_route(city)
         self.add_route(0)
@@ -37,10 +41,36 @@ class VRP:
         return total_cost, len(self.trucks)
 
     def __str__(self):
-        string = "My Route: \n"
+        string = "Route: \n"
         for i, t in enumerate(self.trucks):
             string += "Truck " + str(i + 1) + ": " + str(t.route) + "\n"
         return string + "Total Cost: " + str(self.cost) + "\n"
+
+    def generate_start_permutation_3NN(self):
+        permutation = []
+        unvisited_cities = self.unvisited_cities.copy()
+        cities = self.unvisited_cities.copy()
+        current_city = 0
+        while unvisited_cities:
+            min1 = min2 = min3 = np.inf
+            min1_city, min2_city, min3_city = 0, 0, 0
+            for city in cities:
+                dist = self.dist_matrix[current_city][city]
+                if city != current_city and dist < min3 and city in unvisited_cities and city != 0:
+                    min3 = dist
+                    min3_city = city
+                    if dist < min2:
+                        min3, min2 = min2, min3
+                        min3_city, min2_city = min2_city, min3_city
+                        if min2 < min1:
+                            min1, min2 = min2, min1
+                            min1_city, min2_city = min2_city, min1_city
+            choices = [min1_city, min2_city, min3_city]
+            choices = list(filter(lambda x: x != 0, choices))
+            city = random.choice(choices)
+            permutation.append(city)
+            unvisited_cities.remove(city)
+        return np.array(permutation)
 
 
 class Truck:

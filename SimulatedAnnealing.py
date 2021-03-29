@@ -2,29 +2,33 @@ import numpy as np
 import random
 from MetaHeuristicFramework import VRP
 
+
 class SimulatedAnnealing:
-    def __init__(self, capacity, dist_matrix, goods, start_temp=1000000, maxIter=10000, alpha=0.95):
+    def __init__(self, capacity, dist_matrix, goods, start_temp=90, alpha=0.01):
         self.cities = list(range(1, len(goods)))
         self.city_dist_matrix = dist_matrix
         self.goods = goods
         self.truck_capacity = capacity
-        self.saBest = VRP(capacity, dist_matrix, goods, np.random.permutation(self.cities))
-        self.sa_search(start_temp, maxIter,alpha)
+        self.saBest = VRP(capacity, dist_matrix, goods)
+        self.sa_search(start_temp, alpha)
 
-    def sa_search(self, temp, maxIter, alpha):
-        candidate = self.saBest
-        for i in range(maxIter):
+    def sa_search(self, temp, alpha):
+        candidate, i = self.saBest, 0
+        while temp > 0:
             n_hood = self.getNeighborhood(candidate)
             random_neighbor = random.choice(n_hood)
-            if random_neighbor.cost < candidate.cost or random.random() <= np.exp(-(random_neighbor.cost[0] - candidate.cost[0])/temp):
-                candidate = random_neighbor
-            if candidate.cost < self.saBest.cost:
-                self.saBest = candidate
+            chance = np.exp((candidate.cost[0] - random_neighbor.cost[0]) / temp)
+            temp -= alpha
+            if random_neighbor.cost[0] < self.saBest.cost[0]:
+                self.saBest = random_neighbor
                 print("Improvement Found!")
                 print("Iteration: ", i, "\nBest")
                 print(self.saBest)
-            temp = temp*alpha
-
+            if random_neighbor.cost[0] < candidate.cost[0] or random.random() < chance:
+                candidate = random_neighbor
+            if not i % 1000:
+                print(temp)
+            i += 1
 
     def getNeighborhood(self, candidate):
         neighborhood = []
@@ -35,3 +39,7 @@ class SimulatedAnnealing:
                 neighborhood.append(
                     VRP(self.truck_capacity, self.city_dist_matrix, self.goods, np.array(new_node)))
         return neighborhood
+
+    def __str__(self):
+        string = "Simulated Annealing:\nThe Best Route Found: \n"
+        return string + str(self.saBest)

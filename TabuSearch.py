@@ -39,7 +39,6 @@ class TabuSearch:
                 del self.tabu_list[key_to_delete]
             if not i % 1000 and i > 0:
                 print("Iteration: ", i)
-                print(self.best_candidate)
             if last_improved == 500:
                 print("Random Reset")
                 last_improved = 0

@@ -12,6 +12,7 @@ class VRP:
         self.config = config
         for city in self.config:
             self.add_route(city)
+        self.add_route(0)
         self.cost = self.calc_cost()
 
     def add_truck(self):
@@ -19,20 +20,27 @@ class VRP:
 
     def add_route(self, city):
         if self.trucks[-1].capacity - self.goods[city] < 0:
-            self.trucks[-1].route.append(0)
             self.trucks[-1].distance_travel += self.dist_matrix[self.trucks[-1].route[-1]][0]
+            self.trucks[-1].route.append(0)
             self.add_truck()
 
         self.trucks[-1].capacity -= self.goods[city]
         self.trucks[-1].distance_travel += self.dist_matrix[self.trucks[-1].route[-1]][city]
         self.trucks[-1].route.append(city)
-        self.unvisited_cities.remove(city)
+        if city != 0:
+            self.unvisited_cities.remove(city)
 
     def calc_cost(self):
         total_cost = 0
         for t in self.trucks:
             total_cost += t.distance_travel
         return total_cost, len(self.trucks)
+
+    def __str__(self):
+        string = "My Route: \n"
+        for i, t in enumerate(self.trucks):
+            string += "Truck " + str(i + 1) + ": " + str(t.route) + "\n"
+        return string + "Total Cost: " + str(self.cost) + "\n"
 
 
 class Truck:

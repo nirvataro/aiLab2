@@ -7,7 +7,7 @@ import AntColonyOptimization as ACO
 
 
 def cvrp(capacity, dist_matrix, goods):
-    solution = TS.TabuSearch(capacity, dist_matrix, goods,)
+    solution = SA.SimulatedAnnealing(capacity, dist_matrix, goods)
 
 
 def config_data(input_file):
@@ -39,6 +39,6 @@ def config_data(input_file):
 
 
 if __name__ == '__main__':
-    input_file = 'E-n33-k4.txt'     # argv[1]
+    input_file = 'E-n22-k4.txt'   # argv[1]
     capacity, dist_matrix, goods = config_data(input_file)
     cvrp(capacity, dist_matrix, goods)

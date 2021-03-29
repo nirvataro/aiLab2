@@ -42,6 +42,7 @@ class VRP:
             string += "Truck " + str(i + 1) + ": " + str(t.route) + "\n"
         return string + "Total Cost: " + str(self.cost) + "\n"
 
+
 class Truck:
     def __init__(self, capacity):
         self.capacity = capacity

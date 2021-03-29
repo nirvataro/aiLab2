@@ -4,15 +4,16 @@ import random
 
 
 class TabuSearch:
-    def __init__(self, capacity, dist_matrix, goods, maxTabuSize = 100000, maxIter = 10000):
+    def __init__(self, capacity, dist_matrix, goods, maxTabuSize=100000, maxIter=10000):
         self.tabu_list = {}
         self.cities = list(range(1, len(goods)))
-        self.sBest = VRP(capacity, dist_matrix, goods, np.random.permutation(self.cities))
-        self.best_candidate = self.sBest
-        self.tabu_list[self.sBest.config.tobytes()] = 0
         self.city_dist_matrix = dist_matrix
         self.goods = goods
         self.truck_capacity = capacity
+        start_perm = self.generate_start_permutation()
+        self.sBest = VRP(capacity, dist_matrix, goods, start_perm)
+        self.best_candidate = self.sBest
+        self.tabu_list[self.sBest.config.tobytes()] = 0
         self.t_search(maxIter, maxTabuSize)
 
     def t_search(self, t_iter, t_size):
@@ -37,7 +38,7 @@ class TabuSearch:
             if len(self.tabu_list) > t_size:
                 key_to_delete = max(self.tabu_list, key=lambda k: self.tabu_list[k])
                 del self.tabu_list[key_to_delete]
-            if not i%1000 and i > 0:
+            if not i % 1000 and i > 0:
                 print("Iteration: ", i)
                 print(self.best_candidate)
             if last_improved == 500:
@@ -61,10 +62,36 @@ class TabuSearch:
         return neighborhood
 
     def perm_mutate(self):
-        s_points = random.sample(range(len(self.sBest.config)), 2)
-        s_points.sort()
-        start, end = s_points[0], s_points[1]
-        part = self.sBest.config[start:end]
-        random.shuffle(part)
-        self.sBest.config[start:end] = part
-        self.best_candidate = self.sBest
+        while True:
+            s_points = random.sample(range(len(self.sBest.config)), 2)
+            s_points.sort()
+            start, end = s_points[0], s_points[1]
+            part = self.sBest.config[start:end]
+            random.shuffle(part)
+            self.best_candidate = self.sBest
+            self.best_candidate.config[start:end] = part
+            if self.tabu_list.get(self.best_candidate.config.tobytes()) is None:
+                return
+
+    def generate_start_permutation(self):
+        permutation = []
+        unvisited_cities = self.cities.copy()
+        current_city = 0
+        while unvisited_cities:
+            min1 = min2 = min3 = np.inf
+            min1_city, min2_city, min3_city = 0, 0, 0
+            for city in self.cities:
+                dist = self.city_dist_matrix[current_city][city]
+                if city != current_city and dist < min3 and city in unvisited_cities and city != 0:
+                    min3 = dist
+                    min3_city = city
+                    if dist < min2:
+                        min3, min2 = min2, min3
+                        min3_city, min2_city = min2_city, min3_city
+                        if min2 < min1:
+                            min1, min2 = min2, min1
+                            min1_city, min2_city = min2_city, min1_city
+            city = random.choice([min1_city, min2_city, min3_city])
+            permutation.append(city)
+            unvisited_cities.remove(city)
+        return np.array(permutation)

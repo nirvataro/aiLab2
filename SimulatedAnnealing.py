@@ -3,7 +3,7 @@ import random
 from MetaHeuristicFramework import VRP
 
 class SimulatedAnnealing:
-    def __init__(self, capacity, dist_matrix, goods, start_temp=10000, maxIter=10000, alpha=0.95):
+    def __init__(self, capacity, dist_matrix, goods, start_temp=1000000, maxIter=10000, alpha=0.95):
         self.cities = list(range(1, len(goods)))
         self.city_dist_matrix = dist_matrix
         self.goods = goods

@@ -7,8 +7,9 @@ import AntColonyOptimization as ACO
 
 
 def cvrp(capacity, dist_matrix, goods):
-     print(SimulatedAnnealing(capacity, dist_matrix, goods))
-     print(TabuSearch(capacity, dist_matrix, goods))
+    ACO.AntColonyOpt(capacity, dist_matrix, goods)
+    print(SimulatedAnnealing(capacity, dist_matrix, goods))
+    print(TabuSearch(capacity, dist_matrix, goods))
 
 
 def config_data(input_file):

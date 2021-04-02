@@ -28,7 +28,7 @@ class TabuSearch:
                     best_candidate = cand
             if best_candidate.cost[0] < self.tsBest.cost[0]:
                 if output:
-                    self.tsBest = best_candidate
+                    self.tsBest = VRP(self.truck_capacity, self.city_dist_matrix, self.goods, config=best_candidate.config.copy())
                     print("Improvement Found!")
                     print("Best:")
                     print(self.tsBest)
@@ -43,9 +43,9 @@ class TabuSearch:
                 del self.tabu_list[key_to_delete]
             if not last_improved % 100:
                 if output:
-                    print("Mutation ", last_improved)
+                    print("Mutation ")
                 best_candidate = self.mutate()
-            if last_improved == 500:
+            if last_improved == 300:
                 if output:
                     print("Random Reset")
                 city_list = self.cities.copy()

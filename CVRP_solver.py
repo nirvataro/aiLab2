@@ -4,13 +4,15 @@ from scipy.spatial import distance
 from TabuSearch import TabuSearch as TS
 from SimulatedAnnealing import SimulatedAnnealing as SA
 from AntColonyOptimization import AntColonyOpt as ACO
+from GeneticAlgorithm import gen_alg as GA
 
 
 def cvrp(capacity, dist_matrix, goods):
-    print(TS(capacity, dist_matrix, goods))
-    print(SA(capacity, dist_matrix, goods))
-    print(ACO(capacity, dist_matrix, goods))
-
+    # cross, select, mutate
+    #GA(1, 3, 0, capacity, dist_matrix, goods)
+    print(TS(capacity, dist_matrix, goods, output=True))
+    #print(SA(capacity, dist_matrix, goods))
+    #print(ACO(capacity, dist_matrix, goods))
     
 def config_data(input_file):
     with open(input_file) as f:

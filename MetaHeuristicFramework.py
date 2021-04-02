@@ -1,6 +1,5 @@
 import numpy as np
 import random
-MaxSearches = 10000
 
 
 class VRP:

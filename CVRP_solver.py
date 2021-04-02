@@ -7,6 +7,8 @@ from AntColonyOptimization import AntColonyOpt
 
 def cvrp(capacity, dist_matrix, goods):
     print(TabuSearch(capacity, dist_matrix, goods))
+    print(SA(capacity, dist_matrix, goods))
+    print(TS(capacity, dist_matrix, goods))
 
     
 def config_data(input_file):
@@ -38,10 +40,6 @@ def config_data(input_file):
 
 
 if __name__ == '__main__':
-#     input_file = 'E-n33-k4.txt'   # argv[1]
-#     capacity, dist_matrix, goods = config_data(input_file)
-#     cvrp(capacity, dist_matrix, goods)
-
-    input_file = 'E-n22-k4.txt'   # argv[1]
-    capacity, dist_matrix, goods = config_data(input_file)
-    cvrp(capacity, dist_matrix, goods)
+  input_file = 'E-n33-k4.txt'   # argv[1]
+  capacity, dist_matrix, goods = config_data(input_file)
+  cvrp(capacity, dist_matrix, goods)

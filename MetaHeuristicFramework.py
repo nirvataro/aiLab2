@@ -1,6 +1,5 @@
 import numpy as np
 import random
-MaxSearches = 10000
 
 
 class VRP:
@@ -16,11 +15,6 @@ class VRP:
             self.config = config
         self.cost = None
         self.update_path()
-#         for city in self.config:
-#             self.add_route(city)
-#         self.add_route(0)
-#         self.cost = self.calc_cost()
-
 
     def add_truck(self):
         self.trucks.append(Truck(self.max_capacity))
@@ -42,7 +36,6 @@ class VRP:
         for t in self.trucks:
             total_cost += t.distance_travel
         return total_cost, len(self.trucks)
-
 
     def update_path(self):
         self.trucks = [Truck(self.max_capacity)]

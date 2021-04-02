@@ -8,7 +8,8 @@ from AntColonyOptimization import AntColonyOpt as ACO
 
 def cvrp(capacity, dist_matrix, goods):
     print(ACO(capacity, dist_matrix, goods))
-
+    print(SA(capacity, dist_matrix, goods))
+    print(TS(capacity, dist_matrix, goods))
 
 def config_data(input_file):
     with open(input_file) as f:

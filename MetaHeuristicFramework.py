@@ -14,10 +14,8 @@ class VRP:
             self.config = self.generate_start_permutation_3NN()
         else:
             self.config = config
-        for city in self.config:
-            self.add_route(city)
-        self.add_route(0)
-        self.cost = self.calc_cost()
+        self.cost = None
+        self.update_path()
 
     def add_truck(self):
         self.trucks.append(Truck(self.max_capacity))
@@ -39,6 +37,14 @@ class VRP:
         for t in self.trucks:
             total_cost += t.distance_travel
         return total_cost, len(self.trucks)
+
+    def update_path(self):
+        self.trucks = [Truck(self.max_capacity)]
+        for city in self.config:
+            self.add_route(city)
+        self.add_route(0)
+        self.cost = self.calc_cost()
+        self.unvisited_cities = list(range(1, len(self.goods)))
 
     def __str__(self):
         string = "Route: \n"

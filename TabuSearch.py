@@ -41,15 +41,16 @@ class TabuSearch:
             if len(self.tabu_list) > t_size:
                 key_to_delete = max(self.tabu_list, key=lambda k: self.tabu_list[k])
                 del self.tabu_list[key_to_delete]
-            if last_improved % 100:
+            if not last_improved % 100:
                 if output:
-                    print("Mutation")
+                    print("Mutation ", last_improved)
                 best_candidate = self.mutate()
             if last_improved == 500:
                 if output:
                     print("Random Reset")
-                    city_list = self.cities.copy()
-                    best_candidate = VRP(self.truck_capacity, self.city_dist_matrix, self.goods, config=random.shuffle(city_list))
+                city_list = self.cities.copy()
+                best_candidate = VRP(self.truck_capacity, self.city_dist_matrix, self.goods, config=random.shuffle(city_list))
+                last_improved = 0
             time_left = end_time - time.time()
 
     def __str__(self):

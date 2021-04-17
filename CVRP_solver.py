@@ -9,11 +9,13 @@ from GeneticAlgorithm import gen_alg as GA
 
 def cvrp(capacity, dist_matrix, goods):
     # cross, select, mutate
-    #GA(1, 3, 0, capacity, dist_matrix, goods)
-    print(TS(capacity, dist_matrix, goods, output=True))
-    #print(SA(capacity, dist_matrix, goods))
-    #print(ACO(capacity, dist_matrix, goods))
-    
+    GA(1, 3, 0, capacity, dist_matrix, goods, search_time=300)
+    print(TS(capacity, dist_matrix, goods, output=True, search_time=300))
+
+    print(SA(capacity, dist_matrix, goods, output=True, search_time=300))
+    print(ACO(capacity, dist_matrix, goods, output=True, search_time=300))
+
+
 def config_data(input_file):
     with open(input_file) as f:
         lines = f.readlines()
@@ -43,6 +45,6 @@ def config_data(input_file):
 
 
 if __name__ == '__main__':
-  input_file = 'E-n33-k4.txt'   # argv[1]
+  input_file = 'E-n101-k14.txt'   # argv[1]
   capacity, dist_matrix, goods = config_data(input_file)
   cvrp(capacity, dist_matrix, goods)

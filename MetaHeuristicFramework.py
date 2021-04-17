@@ -35,6 +35,17 @@ class VRP:
         total_cost = 0
         for t in self.trucks:
             total_cost += t.distance_travel
+        for i in range(len(self.trucks) - 1):
+            last_city = self.trucks[i].route[-2]
+            if self.trucks[i+1].capacity - self.goods[last_city] > 0 and self.dist_matrix[last_city][self.trucks[i].route[-3]] + self.dist_matrix[0][self.trucks[i].route[-3]] > self.dist_matrix[self.trucks[i+1].route[1]][last_city] + self.dist_matrix[0][last_city]:
+                self.trucks[i].route.remove(last_city)
+                self.trucks[i].distance_travel = self.trucks[i].distance_travel - self.dist_matrix[last_city][0] - self.dist_matrix[last_city][self.trucks[i].route[-2]] + self.dist_matrix[self.trucks[i].route[-2]][0]
+                self.trucks[i].capacity += self.goods[last_city]
+                self.trucks[i+1].route.insert(1, last_city)
+                self.trucks[i+1].distance_travel = self.trucks[i+1].distance_travel - self.dist_matrix[0][self.trucks[i+1].route[2]] + \
+                                                 self.dist_matrix[self.trucks[i+1].route[0]][self.trucks[i+1].route[1]] + self.dist_matrix[self.trucks[i+1].route[1]][self.trucks[i+1].route[2]]
+                self.trucks[i+1].capacity -= self.goods[last_city]
+                return self.calc_cost()
         return total_cost, len(self.trucks)
 
     def update_path(self):
@@ -48,7 +59,7 @@ class VRP:
     def __str__(self):
         string = "Route: \n"
         for i, t in enumerate(self.trucks):
-            string += "Truck " + str(i + 1) + ": " + str(t.route) + "\n"
+            string += "Truck: {} ".format(str(i + 1)) + str(t) + "\n"
         return string + "Total Cost: " + str(self.cost) + "\n"
 
     def generate_start_permutation_3NN(self):
@@ -83,3 +94,6 @@ class Truck:
         self.capacity = capacity
         self.distance_travel = 0
         self.route = [0]
+
+    def __str__(self):
+        return str(self.route) + " Capacity left: " + str(self.capacity)

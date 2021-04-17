@@ -5,7 +5,7 @@ import time
 
 
 class TabuSearch:
-    def __init__(self, capacity, dist_matrix, goods, maxTabuSize=100000, search_time=120, output=False):
+    def __init__(self, capacity, dist_matrix, goods, maxTabuSize=None, search_time=120, output=False):
         self.tabu_list = {}
         self.cities = list(range(1, len(goods)))
         self.city_dist_matrix = dist_matrix
@@ -13,6 +13,9 @@ class TabuSearch:
         self.truck_capacity = capacity
         self.tsBest = VRP(capacity, dist_matrix, goods)
         self.tabu_list[self.tsBest.config.tobytes()] = 0
+        self.datatype = None
+        if maxTabuSize is None or maxTabuSize > len(self.cities) ** 2:
+            maxTabuSize = round(len(self.cities) ** 2)
         self.t_search(search_time, maxTabuSize, output)
 
     def t_search(self,  search_time, t_size, output):
@@ -26,6 +29,14 @@ class TabuSearch:
             for cand in neighborhood:
                 if self.tabu_list.get(cand.config.tobytes()) is None and (best_candidate is None or best_candidate.cost[0] > cand.cost[0]):
                     best_candidate = cand
+            if best_candidate is None:
+                max_t = 0
+                for cand in self.tabu_list:
+                    if self.tabu_list[cand] > max_t:
+                        best_config = np.fromstring(cand, dtype=int)
+                        best_candidate = VRP(self.truck_capacity, self.city_dist_matrix, self.goods, best_config)
+                        max_t = self.tabu_list[cand]
+                self.tabu_list.pop(best_config.tobytes())
             if best_candidate.cost[0] < self.tsBest.cost[0]:
                 if output:
                     self.tsBest = VRP(self.truck_capacity, self.city_dist_matrix, self.goods, config=best_candidate.config.copy())
@@ -67,7 +78,7 @@ class TabuSearch:
         return neighborhood
 
     def mutate(self):
-        while True:
+        for _ in range(15):
             s_points = random.sample(range(len(self.tsBest.config)), 2)
             s_points.sort()
             start, end = s_points[0], s_points[1]
@@ -78,3 +89,5 @@ class TabuSearch:
             best_candidate = VRP(self.truck_capacity, self.city_dist_matrix, self.goods, new_config)
             if self.tabu_list.get(best_candidate.config.tobytes()) is None:
                 return best_candidate
+        city_list = self.cities.copy()
+        return VRP(self.truck_capacity, self.city_dist_matrix, self.goods, config=random.shuffle(city_list))
